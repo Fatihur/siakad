@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Jadwal extends Model
 {
     protected $table = 'jadwal';
-    protected $fillable = ['semester_id', 'kelas_id', 'mata_pelajaran_id', 'guru_id', 'ruang_id', 'hari', 'jam_mulai', 'jam_selesai', 'dipublikasi'];
-    protected $casts = ['dipublikasi' => 'boolean'];
+    protected $fillable = ['semester_id', 'kelas_id', 'mata_pelajaran_id', 'guru_id', 'ruang_id', 'hari', 'jam_mulai', 'jam_selesai'];
 
     public function semester()
     {

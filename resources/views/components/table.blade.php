@@ -1,18 +1,19 @@
 @props(['title', 'createRoute' => null, 'createText' => 'Tambah', 'useDataTable' => true])
 
-<div class="bg-white rounded-xl shadow-sm">
-    <div class="p-4 sm:p-6 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-        <h2 class="font-semibold text-gray-800">{{ $title }}</h2>
+<div class="card">
+    <div class="px-6 py-4 border-b border-stroke flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <h3 class="font-semibold text-[#1C2434]">{{ $title }}</h3>
         @if($createRoute)
-        <a href="{{ $createRoute }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 whitespace-nowrap">
-            <i class="fas fa-plus mr-2"></i>{{ $createText }}
+        <a href="{{ $createRoute }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            <span>{{ $createText }}</span>
         </a>
         @endif
     </div>
-    <div class="p-4 sm:p-6">
+    <div class="p-6">
         <div class="overflow-x-auto">
             <table class="w-full {{ $useDataTable ? 'datatable' : '' }}" style="width:100%">
-                <thead class="bg-gray-50">
+                <thead>
                     {{ $header }}
                 </thead>
                 <tbody>

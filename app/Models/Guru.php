@@ -19,4 +19,9 @@ class Guru extends Model
     {
         return $this->hasMany(Jadwal::class);
     }
+
+    public function mataPelajaran()
+    {
+        return $this->belongsToMany(MataPelajaran::class, 'guru_mata_pelajaran', 'guru_id', 'mata_pelajaran_id')->withTimestamps();
+    }
 }

@@ -3,78 +3,97 @@
 
 @section('content')
 <div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-    <p class="text-gray-500">Selamat datang, {{ $guru->nama }}</p>
+    <h2 class="text-2xl font-bold text-[#1C2434]">Dashboard</h2>
+    <p class="text-[#64748B]">Selamat datang, {{ $guru->nama }}</p>
 </div>
 
 <!-- Stats Cards -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6">
-    <div class="bg-white rounded-xl p-4 sm:p-6 shadow-sm flex items-center gap-3 sm:gap-4">
-        <div class="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-            <i class="fas fa-chalkboard text-lg sm:text-2xl text-blue-600"></i>
-        </div>
-        <div class="min-w-0">
-            <p class="text-xl sm:text-2xl font-bold text-gray-800">{{ $stats['total_kelas'] }}</p>
-            <p class="text-gray-500 text-xs sm:text-sm truncate">Kelas Diajar</p>
-        </div>
-    </div>
-    <div class="bg-white rounded-xl p-4 sm:p-6 shadow-sm flex items-center gap-3 sm:gap-4">
-        <div class="w-10 h-10 sm:w-14 sm:h-14 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-            <i class="fas fa-tasks text-lg sm:text-2xl text-yellow-600"></i>
-        </div>
-        <div class="min-w-0">
-            <p class="text-xl sm:text-2xl font-bold text-gray-800">{{ $stats['tugas_belum_dinilai'] }}</p>
-            <p class="text-gray-500 text-xs sm:text-sm truncate">Belum Dinilai</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+    <div class="stat-card">
+        <div class="flex items-center gap-4">
+            <div class="stat-icon bg-[#EFF4FB] text-primary">
+                <i class="fas fa-chalkboard text-xl"></i>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-[#1C2434]">{{ $stats['total_kelas'] }}</p>
+                <p class="text-sm text-[#64748B]">Kelas Diajar</p>
+            </div>
         </div>
     </div>
-    <div class="bg-white rounded-xl p-4 sm:p-6 shadow-sm flex items-center gap-3 sm:gap-4">
-        <div class="w-10 h-10 sm:w-14 sm:h-14 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-            <i class="fas fa-file-alt text-lg sm:text-2xl text-orange-600"></i>
-        </div>
-        <div class="min-w-0">
-            <p class="text-xl sm:text-2xl font-bold text-gray-800">{{ $stats['nilai_draft'] }}</p>
-            <p class="text-gray-500 text-xs sm:text-sm truncate">Nilai Draft</p>
+    
+    <div class="stat-card">
+        <div class="flex items-center gap-4">
+            <div class="stat-icon bg-[#FEF9C3] text-[#CA8A04]">
+                <i class="fas fa-tasks text-xl"></i>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-[#1C2434]">{{ $stats['tugas_belum_dinilai'] }}</p>
+                <p class="text-sm text-[#64748B]">Belum Dinilai</p>
+            </div>
         </div>
     </div>
-    <div class="bg-white rounded-xl p-4 sm:p-6 shadow-sm flex items-center gap-3 sm:gap-4">
-        <div class="w-10 h-10 sm:w-14 sm:h-14 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-            <i class="fas fa-exclamation-circle text-lg sm:text-2xl text-red-600"></i>
+    
+    <div class="stat-card">
+        <div class="flex items-center gap-4">
+            <div class="stat-icon bg-[#E0F2FE] text-meta-5">
+                <i class="fas fa-file-alt text-xl"></i>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-[#1C2434]">{{ $stats['nilai_draft'] }}</p>
+                <p class="text-sm text-[#64748B]">Nilai Draft</p>
+            </div>
         </div>
-        <div class="min-w-0">
-            <p class="text-xl sm:text-2xl font-bold text-gray-800">{{ $stats['nilai_ditolak'] }}</p>
-            <p class="text-gray-500 text-xs sm:text-sm truncate">Nilai Ditolak</p>
+    </div>
+    
+    <div class="stat-card">
+        <div class="flex items-center gap-4">
+            <div class="stat-icon bg-[#FEF2F2] text-meta-1">
+                <i class="fas fa-exclamation-circle text-xl"></i>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-[#1C2434]">{{ $stats['nilai_ditolak'] }}</p>
+                <p class="text-sm text-[#64748B]">Nilai Ditolak</p>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Jadwal Hari Ini -->
-<div class="bg-white rounded-xl shadow-sm">
-    <div class="p-6 border-b">
-        <h2 class="font-semibold text-gray-800">Jadwal Mengajar Hari Ini</h2>
+<div class="card">
+    <div class="px-6 py-4 border-b border-stroke">
+        <h3 class="font-semibold text-[#1C2434]">Jadwal Mengajar Hari Ini</h3>
+        <p class="text-sm text-[#64748B]">{{ now()->locale('id')->isoFormat('dddd, D MMMM Y') }}</p>
     </div>
     <div class="p-6">
         @if($jadwalHariIni->count() > 0)
-        <div class="space-y-4">
+        <div class="space-y-3">
             @foreach($jadwalHariIni as $jadwal)
-            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div class="flex items-center justify-between p-4 bg-[#F9FAFB] rounded-lg hover:bg-[#EFF4FB] transition-colors">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-book text-indigo-600"></i>
+                    <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-white">
+                        <i class="fas fa-book"></i>
                     </div>
                     <div>
-                        <p class="font-medium">{{ $jadwal->mataPelajaran->nama }}</p>
-                        <p class="text-sm text-gray-500">{{ $jadwal->kelas->nama }} • {{ $jadwal->ruang->nama }}</p>
+                        <p class="font-semibold text-[#1C2434]">{{ $jadwal->mataPelajaran->nama }}</p>
+                        <p class="text-sm text-[#64748B]">{{ $jadwal->kelas->nama }} &bull; {{ $jadwal->ruang->nama }}</p>
                     </div>
                 </div>
                 <div class="text-right">
-                    <p class="font-medium">{{ substr($jadwal->jam_mulai, 0, 5) }} - {{ substr($jadwal->jam_selesai, 0, 5) }}</p>
-                    <a href="{{ route('guru.absensi.create', $jadwal) }}" class="text-sm text-indigo-600 hover:underline">Mulai Absensi</a>
+                    <p class="font-semibold text-[#1C2434]">{{ substr($jadwal->jam_mulai, 0, 5) }} - {{ substr($jadwal->jam_selesai, 0, 5) }}</p>
+                    <a href="{{ route('guru.absensi.create', $jadwal) }}" class="text-sm text-primary hover:underline">
+                        <i class="fas fa-clipboard-check mr-1"></i>Absensi
+                    </a>
                 </div>
             </div>
             @endforeach
         </div>
         @else
-        <p class="text-gray-500 text-center py-4">Tidak ada jadwal mengajar hari ini</p>
+        <div class="text-center py-8">
+            <div class="w-16 h-16 bg-[#F9FAFB] rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-calendar-times text-2xl text-[#9CA3AF]"></i>
+            </div>
+            <p class="text-[#64748B]">Tidak ada jadwal mengajar hari ini</p>
+        </div>
         @endif
     </div>
 </div>

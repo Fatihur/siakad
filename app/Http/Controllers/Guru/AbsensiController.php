@@ -30,6 +30,15 @@ class AbsensiController extends Controller
         $this->authorize($jadwal);
         $tanggal = Carbon::today();
         
+        // Validasi: hanya bisa absen di hari yang sesuai jadwal
+        $hariMap = ['senin' => 1, 'selasa' => 2, 'rabu' => 3, 'kamis' => 4, 'jumat' => 5, 'sabtu' => 6, 'minggu' => 0];
+        $hariJadwal = $hariMap[strtolower($jadwal->hari)] ?? null;
+        
+        if ($hariJadwal !== $tanggal->dayOfWeek) {
+            return redirect()->route('guru.absensi.index')
+                ->withErrors(['error' => 'Absensi hanya dapat dilakukan pada hari ' . ucfirst($jadwal->hari)]);
+        }
+        
         // Cek apakah sudah ada sesi hari ini
         $sesi = SesiAbsensi::where('jadwal_id', $jadwal->id)->where('tanggal', $tanggal)->first();
         
@@ -55,6 +64,12 @@ class AbsensiController extends Controller
 
         if ($sesi->status === 'ditutup') {
             return back()->withErrors(['error' => 'Sesi absensi sudah ditutup']);
+        }
+
+        // Validasi: hanya bisa simpan absensi di hari yang sama
+        if (!$sesi->tanggal->isToday()) {
+            return redirect()->route('guru.absensi.index')
+                ->withErrors(['error' => 'Absensi hanya dapat disimpan pada hari yang sama']);
         }
 
         $request->validate([

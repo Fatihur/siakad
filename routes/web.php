@@ -25,14 +25,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::resource('kelas', Admin\KelasController::class);
     Route::resource('ruang', Admin\RuangController::class);
     Route::resource('mata-pelajaran', Admin\MataPelajaranController::class)->parameters(['mata-pelajaran' => 'mataPelajaran']);
+    Route::get('mata-pelajaran/{mataPelajaran}/guru', [Admin\MataPelajaranController::class, 'getGuru'])->name('mata-pelajaran.guru');
     Route::resource('guru', Admin\GuruController::class);
     Route::resource('siswa', Admin\SiswaController::class);
+    
+    // Jam Istirahat
+    Route::get('jam-istirahat', [Admin\JamIstirahatController::class, 'index'])->name('jam-istirahat.index');
+    Route::post('jam-istirahat', [Admin\JamIstirahatController::class, 'store'])->name('jam-istirahat.store');
+    Route::put('jam-istirahat/{jamIstirahat}', [Admin\JamIstirahatController::class, 'update'])->name('jam-istirahat.update');
+    Route::delete('jam-istirahat/{jamIstirahat}', [Admin\JamIstirahatController::class, 'destroy'])->name('jam-istirahat.destroy');
+    Route::post('jam-istirahat/{jamIstirahat}/toggle', [Admin\JamIstirahatController::class, 'toggle'])->name('jam-istirahat.toggle');
     
     // Jadwal
     Route::get('jadwal/generator', [Admin\JadwalController::class, 'generator'])->name('jadwal.generator');
     Route::post('jadwal/generator', [Admin\JadwalController::class, 'generatorStore'])->name('jadwal.generator.store');
     Route::resource('jadwal', Admin\JadwalController::class);
-    Route::post('jadwal/{jadwal}/publish', [Admin\JadwalController::class, 'publish'])->name('jadwal.publish');
     
     // Verifikasi Nilai
     Route::get('verifikasi-nilai', [Admin\VerifikasiNilaiController::class, 'index'])->name('verifikasi-nilai.index');

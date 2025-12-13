@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Jadwal, Semester, Kelas, MataPelajaran, Guru, Ruang, AuditLog};
+use App\Models\{Jadwal, Semester, Kelas, MataPelajaran, Guru, Ruang, JamIstirahat, AuditLog};
 use Illuminate\Http\Request;
 
 class JadwalController extends Controller
@@ -16,7 +16,8 @@ class JadwalController extends Controller
             ->orderBy('hari')
             ->orderBy('jam_mulai')
             ->get();
-        return view('admin.jadwal.index', compact('data', 'semester'));
+        $jamIstirahat = JamIstirahat::getAktif();
+        return view('admin.jadwal.index', compact('data', 'semester', 'jamIstirahat'));
     }
 
     public function create()
@@ -24,9 +25,8 @@ class JadwalController extends Controller
         $semester = Semester::getAktif();
         $kelas = Kelas::with('jurusan')->where('aktif', true)->get();
         $mapel = MataPelajaran::where('aktif', true)->get();
-        $guru = Guru::where('aktif', true)->get();
         $ruang = Ruang::where('aktif', true)->get();
-        return view('admin.jadwal.form', compact('semester', 'kelas', 'mapel', 'guru', 'ruang'));
+        return view('admin.jadwal.form', compact('semester', 'kelas', 'mapel', 'ruang'));
     }
 
     public function store(Request $request)
@@ -59,9 +59,8 @@ class JadwalController extends Controller
         $semester = Semester::getAktif();
         $kelas = Kelas::with('jurusan')->where('aktif', true)->get();
         $mapel = MataPelajaran::where('aktif', true)->get();
-        $guru = Guru::where('aktif', true)->get();
         $ruang = Ruang::where('aktif', true)->get();
-        return view('admin.jadwal.form', ['data' => $jadwal, 'semester' => $semester, 'kelas' => $kelas, 'mapel' => $mapel, 'guru' => $guru, 'ruang' => $ruang]);
+        return view('admin.jadwal.form', ['data' => $jadwal, 'semester' => $semester, 'kelas' => $kelas, 'mapel' => $mapel, 'ruang' => $ruang]);
     }
 
     public function update(Request $request, Jadwal $jadwal)
@@ -96,20 +95,14 @@ class JadwalController extends Controller
         return redirect()->route('admin.jadwal.index')->with('success', 'Jadwal berhasil dihapus');
     }
 
-    public function publish(Jadwal $jadwal)
-    {
-        $jadwal->update(['dipublikasi' => !$jadwal->dipublikasi]);
-        return back()->with('success', 'Status publikasi jadwal berhasil diubah');
-    }
-
     public function generator()
     {
         $semester = Semester::getAktif();
         $kelas = Kelas::with('jurusan')->where('aktif', true)->get();
         $mapel = MataPelajaran::where('aktif', true)->get();
-        $guru = Guru::where('aktif', true)->get();
         $ruang = Ruang::where('aktif', true)->get();
-        return view('admin.jadwal.generator', compact('semester', 'kelas', 'mapel', 'guru', 'ruang'));
+        $jamIstirahat = JamIstirahat::getAktif();
+        return view('admin.jadwal.generator', compact('semester', 'kelas', 'mapel', 'ruang', 'jamIstirahat'));
     }
 
     public function generatorStore(Request $request)
@@ -127,6 +120,9 @@ class JadwalController extends Controller
         $created = 0;
         $errors = [];
         $hari_list = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+        
+        // Get active break times
+        $jamIstirahat = JamIstirahat::getAktif()->keyBy('setelah_jam_ke');
 
         foreach ($jadwalData as $jamKe => $hariData) {
             foreach ($hariData as $hari => $data) {
@@ -134,18 +130,28 @@ class JadwalController extends Controller
                     continue;
                 }
 
-                // Hitung jam mulai dan selesai berdasarkan jam ke
-                $startMinutes = $this->hitungMenit($jamMulaiDefault) + (($jamKe - 1) * $durasi);
+                // Hitung jam mulai dan selesai berdasarkan jam ke, dengan memperhitungkan istirahat
+                $totalIstirahatMenit = 0;
+                foreach ($jamIstirahat as $afterJam => $istirahat) {
+                    if ($afterJam < $jamKe) {
+                        $totalIstirahatMenit += $istirahat->durasi_menit;
+                    }
+                }
+                
+                $startMinutes = $this->hitungMenit($jamMulaiDefault) + (($jamKe - 1) * $durasi) + $totalIstirahatMenit;
                 $endMinutes = $startMinutes + $durasi;
                 $jamMulai = $this->menitKeWaktu($startMinutes);
                 $jamSelesai = $this->menitKeWaktu($endMinutes);
 
+                // Ambil guru_id - bisa dari form atau dari relasi mapel
+                $guruId = $data['guru'];
+                
                 // Cek konflik
                 $fakeRequest = new Request([
                     'semester_id' => $request->semester_id,
                     'kelas_id' => $request->kelas_id,
                     'mata_pelajaran_id' => $data['mapel'],
-                    'guru_id' => $data['guru'],
+                    'guru_id' => $guruId,
                     'ruang_id' => $data['ruang'],
                     'hari' => $hari,
                     'jam_mulai' => $jamMulai,
@@ -163,7 +169,7 @@ class JadwalController extends Controller
                     'semester_id' => $request->semester_id,
                     'kelas_id' => $request->kelas_id,
                     'mata_pelajaran_id' => $data['mapel'],
-                    'guru_id' => $data['guru'],
+                    'guru_id' => $guruId,
                     'ruang_id' => $data['ruang'],
                     'hari' => $hari,
                     'jam_mulai' => $jamMulai,
