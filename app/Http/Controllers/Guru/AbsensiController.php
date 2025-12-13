@@ -17,7 +17,6 @@ class AbsensiController extends Controller
         $jadwal = Jadwal::with(['kelas.jurusan', 'mataPelajaran'])
             ->where('guru_id', $guru->id)
             ->where('semester_id', $semester?->id)
-            ->where('dipublikasi', true)
             ->orderBy('hari')
             ->orderBy('jam_mulai')
             ->get();

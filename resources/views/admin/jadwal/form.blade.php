@@ -61,11 +61,13 @@
                     </select>
                 </div>
                 <div>
-                    <label class="form-label">Guru Pengajar</label>
-                    <input type="hidden" name="guru_id" id="guru-id-input" value="{{ old('guru_id', $data->guru_id ?? '') }}">
-                    <div id="guru-display" class="form-input bg-[#F9FAFB] flex items-center gap-2 min-h-[42px]">
-                        <span class="text-[#9CA3AF]">Pilih mata pelajaran terlebih dahulu</span>
-                    </div>
+                    <label class="form-label">Guru Pengajar <span class="text-meta-1">*</span></label>
+                    <select name="guru_id" id="guru-select" required class="form-input form-select">
+                        <option value="">Pilih Mata Pelajaran dahulu</option>
+                    </select>
+                    <p class="text-xs text-[#64748B] mt-1">
+                        <i class="fas fa-info-circle mr-1"></i>Pilih mata pelajaran untuk melihat daftar guru
+                    </p>
                 </div>
             </div>
             
@@ -109,50 +111,41 @@ $(document).ready(function() {
     const currentGuruId = '{{ old('guru_id', $data->guru_id ?? '') }}';
     
     function fetchGuruByMapel(mapelId) {
-        const guruDisplay = $('#guru-display');
-        const guruInput = $('#guru-id-input');
+        const guruSelect = $('#guru-select');
         
         if (!mapelId) {
-            guruDisplay.html('<span class="text-[#9CA3AF]">Pilih mata pelajaran terlebih dahulu</span>');
-            guruInput.val('');
+            guruSelect.html('<option value="">Pilih Mata Pelajaran dahulu</option>');
             return;
         }
         
         // Show loading
-        guruDisplay.html('<span class="text-[#64748B]"><i class="fas fa-spinner fa-spin mr-2"></i>Memuat data guru...</span>');
+        guruSelect.html('<option value="">Memuat...</option>');
         
         // AJAX request to get guru
         $.ajax({
             url: `/admin/mata-pelajaran/${mapelId}/guru`,
             method: 'GET',
             success: function(guruData) {
+                guruSelect.empty();
+                
                 if (guruData.length === 0) {
-                    guruDisplay.html('<span class="text-meta-1"><i class="fas fa-exclamation-circle mr-1"></i>Belum ada guru untuk mapel ini</span>');
-                    guruInput.val('');
+                    guruSelect.html('<option value="">Belum ada guru untuk mapel ini</option>');
                     return;
                 }
                 
-                // Display guru names as badges
-                let html = '<div class="flex flex-wrap gap-2">';
+                guruSelect.append('<option value="">Pilih Guru</option>');
                 guruData.forEach(function(guru) {
-                    html += `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 text-primary rounded-md text-sm">
-                        <i class="fas fa-user-tie text-xs"></i>${guru.nama}
-                    </span>`;
+                    const selected = guru.id == currentGuruId ? 'selected' : '';
+                    guruSelect.append(`<option value="${guru.id}" ${selected}>${guru.nama}</option>`);
                 });
-                html += '</div>';
-                guruDisplay.html(html);
                 
-                // Set guru_id (use first guru, or current if exists in list)
-                let selectedGuruId = guruData[0].id;
-                if (currentGuruId) {
-                    const found = guruData.find(g => g.id == currentGuruId);
-                    if (found) selectedGuruId = found.id;
+                // Auto-select first if only one guru and no current selection
+                if (guruData.length === 1 && !currentGuruId) {
+                    guruSelect.val(guruData[0].id);
                 }
-                guruInput.val(selectedGuruId);
             },
             error: function() {
-                guruDisplay.html('<span class="text-meta-1"><i class="fas fa-exclamation-circle mr-1"></i>Gagal memuat data guru</span>');
-                guruInput.val('');
+                guruSelect.html('<option value="">Gagal memuat data guru</option>');
             }
         });
     }

@@ -15,7 +15,7 @@ class DashboardController extends Controller
             'total_guru' => Guru::where('aktif', true)->count(),
             'total_siswa' => Siswa::where('aktif', true)->count(),
             'total_kelas' => Kelas::where('aktif', true)->count(),
-            'jadwal_aktif' => $semester ? Jadwal::where('semester_id', $semester->id)->where('dipublikasi', true)->count() : 0,
+            'jadwal_aktif' => $semester ? Jadwal::where('semester_id', $semester->id)->count() : 0,
             'nilai_pending' => BukuNilai::where('status_verifikasi', 'diajukan')->count(),
             'nilai_terverifikasi' => BukuNilai::where('status_verifikasi', 'terverifikasi')->count(),
         ];

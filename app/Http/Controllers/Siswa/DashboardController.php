@@ -18,7 +18,6 @@ class DashboardController extends Controller
             ->where('kelas_id', $siswa->kelas_id)
             ->where('semester_id', $semester?->id)
             ->where('hari', $hari)
-            ->where('dipublikasi', true)
             ->orderBy('jam_mulai')
             ->get();
 

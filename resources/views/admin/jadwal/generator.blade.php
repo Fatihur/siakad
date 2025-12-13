@@ -88,10 +88,9 @@
                                     <option value="{{ $m->id }}">{{ $m->kode }}</option>
                                     @endforeach
                                 </select>
-                                <input type="hidden" name="jadwal[{{ $jam }}][{{ $hari }}][guru]" class="guru-input" data-jam="{{ $jam }}" data-hari="{{ $hari }}">
-                                <div class="guru-display text-xs px-2 py-1.5 bg-[#F9FAFB] rounded border border-stroke min-h-[28px] flex items-center" data-jam="{{ $jam }}" data-hari="{{ $hari }}">
-                                    <span class="text-[#9CA3AF]">-</span>
-                                </div>
+                                <select name="jadwal[{{ $jam }}][{{ $hari }}][guru]" class="guru-select form-input form-select py-1.5 text-xs" data-jam="{{ $jam }}" data-hari="{{ $hari }}">
+                                    <option value="">Guru</option>
+                                </select>
                                 <select name="jadwal[{{ $jam }}][{{ $hari }}][ruang]" class="ruang-select form-input form-select py-1.5 text-xs">
                                     <option value="">Ruang</option>
                                     @foreach($ruang as $r)
@@ -154,10 +153,9 @@
         </div>
         <div>
             <label class="form-label">Guru</label>
-            <div id="quick-guru-display" class="form-input bg-[#F9FAFB] flex items-center gap-2 min-h-[42px]">
-                <span class="text-[#9CA3AF]">Pilih mapel</span>
-            </div>
-            <input type="hidden" id="quick-guru-id">
+            <select id="quick-guru" class="form-input form-select">
+                <option value="">Pilih Mapel dahulu</option>
+            </select>
         </div>
         <div>
             <label class="form-label">Ruang</label>
@@ -177,7 +175,7 @@
     </div>
     <p class="text-sm text-[#64748B] mt-3">
         <i class="fas fa-info-circle mr-1 text-primary"></i>
-        Klik sel untuk memilih, lalu klik "Terapkan" untuk mengisi otomatis. Guru akan otomatis terisi sesuai mata pelajaran.
+        Klik sel untuk memilih, lalu klik "Terapkan" untuk mengisi otomatis.
     </p>
 </div>
 @endif
@@ -195,10 +193,8 @@ $(document).ready(function() {
     let selectedCells = [];
     let guruCache = {};
     
-    // Jam istirahat data
     const jamIstirahat = @json($jamIstirahat->keyBy('setelah_jam_ke'));
 
-    // Fetch guru by mapel via AJAX
     function fetchGuru(mapelId, callback) {
         if (!mapelId) {
             callback([]);
@@ -223,7 +219,6 @@ $(document).ready(function() {
         });
     }
 
-    // Update jam waktu dengan istirahat
     function updateJamWaktu() {
         const durasi = parseInt($('#durasi').val());
         const jamMulai = $('#jam_mulai_default').val().split(':');
@@ -245,7 +240,6 @@ $(document).ready(function() {
             
             currentMinutes = endMinutes;
             
-            // Check if there's a break after this period
             if (jamIstirahat[jamKe]) {
                 const istirahatDurasi = jamIstirahat[jamKe].durasi_menit;
                 const istirahatStart = currentMinutes;
@@ -274,55 +268,46 @@ $(document).ready(function() {
         const mapelId = $(this).val();
         const jam = $(this).data('jam');
         const hari = $(this).data('hari');
-        const guruDisplay = $(`.guru-display[data-jam="${jam}"][data-hari="${hari}"]`);
-        const guruInput = $(`.guru-input[data-jam="${jam}"][data-hari="${hari}"]`);
+        const guruSelect = $(`.guru-select[data-jam="${jam}"][data-hari="${hari}"]`);
         
-        if (!mapelId) {
-            guruDisplay.html('<span class="text-[#9CA3AF]">-</span>');
-            guruInput.val('');
-            return;
-        }
+        guruSelect.empty().append('<option value="">Guru</option>');
         
-        guruDisplay.html('<i class="fas fa-spinner fa-spin text-[#64748B]"></i>');
+        if (!mapelId) return;
         
         fetchGuru(mapelId, function(guruData) {
-            if (guruData.length === 0) {
-                guruDisplay.html('<span class="text-meta-1 text-[10px]">No guru</span>');
-                guruInput.val('');
-            } else {
-                const nama = guruData.map(g => g.nama.substring(0, 12)).join(', ');
-                guruDisplay.html(`<span class="text-primary truncate" title="${guruData.map(g => g.nama).join(', ')}">${nama}</span>`);
-                guruInput.val(guruData[0].id);
+            guruData.forEach(function(guru) {
+                guruSelect.append(`<option value="${guru.id}">${guru.nama.substring(0, 15)}</option>`);
+            });
+            
+            // Auto-select first if only one
+            if (guruData.length === 1) {
+                guruSelect.val(guruData[0].id);
             }
         });
     });
 
-    // Quick mapel change - fetch guru via AJAX
+    // Quick mapel change - fetch guru
     $('#quick-mapel').change(function() {
         const mapelId = $(this).val();
-        const guruDisplay = $('#quick-guru-display');
-        const guruInput = $('#quick-guru-id');
+        const guruSelect = $('#quick-guru');
+        
+        guruSelect.empty().append('<option value="">Pilih Guru</option>');
         
         if (!mapelId) {
-            guruDisplay.html('<span class="text-[#9CA3AF]">Pilih mapel</span>');
-            guruInput.val('');
+            guruSelect.html('<option value="">Pilih Mapel dahulu</option>');
             return;
         }
         
-        guruDisplay.html('<span class="text-[#64748B]"><i class="fas fa-spinner fa-spin mr-1"></i>Memuat...</span>');
+        guruSelect.html('<option value="">Memuat...</option>');
         
         fetchGuru(mapelId, function(guruData) {
-            if (guruData.length === 0) {
-                guruDisplay.html('<span class="text-meta-1">Belum ada guru</span>');
-                guruInput.val('');
-            } else {
-                let html = '<div class="flex flex-wrap gap-1">';
-                guruData.forEach(function(guru) {
-                    html += `<span class="inline-flex items-center px-2 py-0.5 bg-primary/10 text-primary rounded text-xs">${guru.nama}</span>`;
-                });
-                html += '</div>';
-                guruDisplay.html(html);
-                guruInput.val(guruData[0].id);
+            guruSelect.empty().append('<option value="">Pilih Guru</option>');
+            guruData.forEach(function(guru) {
+                guruSelect.append(`<option value="${guru.id}">${guru.nama}</option>`);
+            });
+            
+            if (guruData.length === 1) {
+                guruSelect.val(guruData[0].id);
             }
         });
     });
@@ -342,7 +327,7 @@ $(document).ready(function() {
     // Apply quick fill
     $('#apply-quick').click(function() {
         const mapelId = $('#quick-mapel').val();
-        const guruId = $('#quick-guru-id').val();
+        const guruId = $('#quick-guru').val();
         const ruangId = $('#quick-ruang').val();
 
         selectedCells.forEach(index => {
@@ -350,13 +335,19 @@ $(document).ready(function() {
             
             if (mapelId) {
                 cell.find('.mapel-select').val(mapelId).trigger('change');
+                
+                // Set guru after delay to wait for dropdown to populate
+                if (guruId) {
+                    setTimeout(() => {
+                        cell.find('.guru-select').val(guruId);
+                    }, 200);
+                }
             }
             if (ruangId) {
                 cell.find('.ruang-select').val(ruangId);
             }
         });
 
-        // Clear selection
         $('.cell-selected').removeClass('cell-selected');
         selectedCells = [];
     });

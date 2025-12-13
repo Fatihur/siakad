@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SIAKAD</title>
+    <title>Login - SIAKAD SMK Kreatif Dompu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -33,11 +33,12 @@
         <div class="hidden lg:flex lg:w-1/2 bg-boxdark-2 flex-col justify-center items-center p-12 relative overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent"></div>
             <div class="relative z-10 text-center">
-                <div class="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
-                    <i class="fas fa-graduation-cap text-white text-4xl"></i>
+                <div class="w-24 h-24 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+                    <i class="fas fa-graduation-cap text-white text-5xl"></i>
                 </div>
-                <h1 class="text-white text-4xl font-bold mb-4">SIAKAD</h1>
-                <p class="text-[#AEB7C0] text-lg max-w-md">Sistem Informasi Akademik untuk mengelola data akademik dengan mudah dan efisien</p>
+                <h1 class="text-white text-3xl font-bold mb-2">SMK Kreatif Dompu</h1>
+                <p class="text-primary text-lg font-medium mb-4">Sistem Informasi Akademik</p>
+                <p class="text-[#AEB7C0] text-base max-w-md">Mengelola data akademik dengan mudah, efisien, dan terintegrasi</p>
                 
                 <div class="mt-12 grid grid-cols-3 gap-6 max-w-sm mx-auto">
                     <div class="text-center">
@@ -59,6 +60,11 @@
                         <p class="text-[#DEE4EE] text-sm">Cepat</p>
                     </div>
                 </div>
+
+                <div class="mt-12 text-[#64748B] text-sm">
+                    <p>Jl. Lintas Sumbawa - Bima, Dompu</p>
+                    <p>Nusa Tenggara Barat</p>
+                </div>
             </div>
             
             <!-- Decorative -->
@@ -74,7 +80,8 @@
                     <div class="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                         <i class="fas fa-graduation-cap text-white text-2xl"></i>
                     </div>
-                    <h1 class="text-[#1C2434] text-2xl font-bold">SIAKAD</h1>
+                    <h1 class="text-[#1C2434] text-xl font-bold">SMK Kreatif Dompu</h1>
+                    <p class="text-[#64748B] text-sm">Sistem Informasi Akademik</p>
                 </div>
                 
                 <div class="bg-white rounded-xl shadow-card p-8 border border-[#E2E8F0]">
@@ -93,12 +100,12 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="mb-5">
-                            <label class="block text-[#1C2434] text-sm font-medium mb-2">Email / Username</label>
+                            <label class="block text-[#1C2434] text-sm font-medium mb-2">Email / Username / NIS / NIP</label>
                             <div class="relative">
                                 <input type="text" name="email" value="{{ old('email') }}" required
                                     class="form-input"
-                                    placeholder="Masukkan email atau username">
-                                <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]"></i>
+                                    placeholder="Masukkan email, username, NIS, atau NIP">
+                                <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]"></i>
                             </div>
                         </div>
                         <div class="mb-6">
@@ -120,7 +127,7 @@
                 </div>
 
                 <p class="text-center text-[#64748B] text-sm mt-6">
-                    &copy; {{ date('Y') }} SIAKAD. All rights reserved.
+                    &copy; {{ date('Y') }} SMK Kreatif Dompu. All rights reserved.
                 </p>
             </div>
         </div>
