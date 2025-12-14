@@ -176,8 +176,8 @@
         <aside id="sidebar" class="sidebar w-[280px] h-screen fixed left-0 top-0 z-40 transform -translate-x-full lg:translate-x-0 transition-all duration-300 flex flex-col">
             <!-- Logo -->
             <div class="flex items-center gap-3 px-6 py-5 border-b border-[#2E3A47] flex-shrink-0">
-                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-graduation-cap text-white text-lg"></i>
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 p-1">
+                    <img src="{{ asset('images/logo-smk.png') }}" alt="Logo SMK" class="w-full h-full object-contain">
                 </div>
                 <div class="sidebar-header-text">
                     <span class="text-white font-bold text-lg">SMK Kreatif</span>
@@ -225,21 +225,32 @@
                             </div>
                         </div>
                         
-                        <!-- User -->
-                        <div class="flex items-center gap-3 pl-3 border-l border-stroke">
-                            <div class="hidden sm:block text-right">
-                                <p class="text-sm font-medium text-[#1C2434]">{{ auth()->user()->name }}</p>
-                                <p class="text-xs text-[#64748B] capitalize">{{ auth()->user()->role }}</p>
+                        <!-- User Dropdown -->
+                        <div class="relative pl-3 border-l border-stroke" id="user-dropdown">
+                            <button id="user-btn" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                                <div class="hidden sm:block text-right">
+                                    <p class="text-sm font-medium text-[#1C2434]">{{ auth()->user()->name }}</p>
+                                    <p class="text-xs text-[#64748B] capitalize">{{ auth()->user()->role }}</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                </div>
+                                <i class="fas fa-chevron-down text-[#64748B] text-xs hidden sm:block"></i>
+                            </button>
+                            <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-default border border-stroke z-50 py-2">
+                                <a href="{{ route(auth()->user()->role . '.profil.index') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-[#64748B] hover:bg-[#F9FAFB] hover:text-primary transition-colors">
+                                    <i class="fas fa-user w-4"></i>
+                                    <span>Profil Saya</span>
+                                </a>
+                                <hr class="my-2 border-stroke">
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#64748B] hover:bg-red-50 hover:text-meta-1 transition-colors">
+                                        <i class="fas fa-sign-out-alt w-4"></i>
+                                        <span>Keluar</span>
+                                    </button>
+                                </form>
                             </div>
-                            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                            </div>
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="w-10 h-10 rounded-full bg-[#F9FAFB] flex items-center justify-center text-[#64748B] hover:text-meta-1 hover:bg-red-50 transition-colors" title="Logout">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                </button>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -364,15 +375,29 @@
             const notifCount = document.getElementById('notif-count');
             const notifList = document.getElementById('notif-list');
 
+            // User Dropdown
+            const userBtn = document.getElementById('user-btn');
+            const userMenu = document.getElementById('user-menu');
+
             notifBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 notifMenu.classList.toggle('hidden');
+                userMenu.classList.add('hidden');
                 if (!notifMenu.classList.contains('hidden')) loadNotifications();
+            });
+
+            userBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userMenu.classList.toggle('hidden');
+                notifMenu.classList.add('hidden');
             });
 
             document.addEventListener('click', (e) => {
                 if (!document.getElementById('notif-dropdown').contains(e.target)) {
                     notifMenu.classList.add('hidden');
+                }
+                if (!document.getElementById('user-dropdown').contains(e.target)) {
+                    userMenu.classList.add('hidden');
                 }
             });
 

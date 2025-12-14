@@ -16,6 +16,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
     
+    // Profil
+    Route::get('/profil', [Admin\ProfilController::class, 'index'])->name('profil.index');
+    Route::put('/profil', [Admin\ProfilController::class, 'update'])->name('profil.update');
+    
     // Master Data
     Route::resource('tahun-akademik', Admin\TahunAkademikController::class)->parameters(['tahun-akademik' => 'tahunAkademik']);
     Route::post('tahun-akademik/{tahunAkademik}/set-aktif', [Admin\TahunAkademikController::class, 'setAktif'])->name('tahun-akademik.set-aktif');
@@ -54,6 +58,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/dashboard', [Guru\DashboardController::class, 'index'])->name('dashboard');
     
+    // Profil
+    Route::get('/profil', [Guru\ProfilController::class, 'index'])->name('profil.index');
+    Route::put('/profil', [Guru\ProfilController::class, 'update'])->name('profil.update');
+    
     // Absensi
     Route::get('absensi', [Guru\AbsensiController::class, 'index'])->name('absensi.index');
     Route::get('absensi/{jadwal}/create', [Guru\AbsensiController::class, 'create'])->name('absensi.create');
@@ -79,6 +87,11 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(f
 // Siswa Routes
 Route::prefix('siswa')->name('siswa.')->middleware(['auth', 'role:siswa'])->group(function () {
     Route::get('/dashboard', [Siswa\DashboardController::class, 'index'])->name('dashboard');
+    
+    // Profil
+    Route::get('/profil', [Siswa\ProfilController::class, 'index'])->name('profil.index');
+    Route::put('/profil', [Siswa\ProfilController::class, 'update'])->name('profil.update');
+    
     Route::get('/jadwal', [Siswa\JadwalController::class, 'index'])->name('jadwal.index');
     Route::get('/nilai', [Siswa\NilaiController::class, 'index'])->name('nilai.index');
     Route::get('/absensi', [Siswa\AbsensiController::class, 'index'])->name('absensi.index');

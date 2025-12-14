@@ -7,130 +7,81 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3C50E0',
-                        strokedark: '#2E3A47',
-                        boxdark: '#24303F',
-                        'boxdark-2': '#1A222C',
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         * { font-family: 'Inter', sans-serif; }
-        .form-input { width: 100%; padding: 12px 16px 12px 44px; border: 1px solid #E2E8F0; border-radius: 6px; font-size: 15px; transition: all 0.2s; }
-        .form-input:focus { outline: none; border-color: #3C50E0; box-shadow: 0 0 0 3px rgba(60,80,224,0.1); }
+        .form-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3C50E0;
+            box-shadow: 0 0 0 3px rgba(60,80,224,0.1);
+        }
     </style>
 </head>
-<body class="bg-[#F1F5F9] min-h-screen">
-    <div class="flex min-h-screen">
-        <!-- Left Side - Branding -->
-        <div class="hidden lg:flex lg:w-1/2 bg-boxdark-2 flex-col justify-center items-center p-12 relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent"></div>
-            <div class="relative z-10 text-center">
-                <div class="w-24 h-24 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
-                    <i class="fas fa-graduation-cap text-white text-5xl"></i>
-                </div>
-                <h1 class="text-white text-3xl font-bold mb-2">SMK Kreatif Dompu</h1>
-                <p class="text-primary text-lg font-medium mb-4">Sistem Informasi Akademik</p>
-                <p class="text-[#AEB7C0] text-base max-w-md">Mengelola data akademik dengan mudah, efisien, dan terintegrasi</p>
+<body class="min-h-screen flex items-center justify-center p-4" style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ asset('images/bg.jpg') }}') center/cover no-repeat fixed;">
+    
+    <div class="w-full max-w-md">
+        <!-- Login Card -->
+        <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8">
+            <!-- Logo & Header -->
+            <div class="text-center mb-8">
+                    <img src="{{ asset('images/logo-smk.png') }}" alt="Logo SMK" class="w-full h-40 object-contain">
                 
-                <div class="mt-12 grid grid-cols-3 gap-6 max-w-sm mx-auto">
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-users text-primary"></i>
-                        </div>
-                        <p class="text-[#DEE4EE] text-sm">Multi User</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-shield-alt text-primary"></i>
-                        </div>
-                        <p class="text-[#DEE4EE] text-sm">Aman</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-bolt text-primary"></i>
-                        </div>
-                        <p class="text-[#DEE4EE] text-sm">Cepat</p>
-                    </div>
-                </div>
-
-                <div class="mt-12 text-[#64748B] text-sm">
-                    <p>Jl. Lintas Sumbawa - Bima, Dompu</p>
-                    <p>Nusa Tenggara Barat</p>
-                </div>
             </div>
-            
-            <!-- Decorative -->
-            <div class="absolute bottom-0 left-0 w-64 h-64 bg-primary/10 rounded-full -translate-x-1/2 translate-y-1/2"></div>
-            <div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full translate-x-1/3 -translate-y-1/3"></div>
-        </div>
-        
-        <!-- Right Side - Login Form -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-6">
-            <div class="w-full max-w-md">
-                <!-- Mobile Logo -->
-                <div class="lg:hidden text-center mb-8">
-                    <div class="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <i class="fas fa-graduation-cap text-white text-2xl"></i>
-                    </div>
-                    <h1 class="text-[#1C2434] text-xl font-bold">SMK Kreatif Dompu</h1>
-                    <p class="text-[#64748B] text-sm">Sistem Informasi Akademik</p>
+
+            <!-- Login Form -->
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Masuk</h2>
+                <p class="text-gray-500 mt-1">Silakan masuk ke akun Anda</p>
+            </div>
+
+            @if($errors->any())
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-3">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span class="text-sm">{{ $errors->first() }}</span>
                 </div>
-                
-                <div class="bg-white rounded-xl shadow-card p-8 border border-[#E2E8F0]">
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-[#1C2434]">Masuk</h2>
-                        <p class="text-[#64748B] mt-2">Silakan masuk ke akun Anda</p>
+            @endif
+
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+                <div class="mb-5">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Email / Username / NIS / NIP</label>
+                    <div class="relative">
+                        <input type="text" name="email" value="{{ old('email') }}" required
+                            class="form-input"
+                            placeholder="Masukkan email, username, NIS, atau NIP">
+                        <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
-
-                    @if($errors->any())
-                        <div class="bg-[#FEF2F2] border border-[#FECACA] text-[#991B1B] px-4 py-3 rounded-lg mb-6 flex items-center gap-3">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <span class="text-sm">{{ $errors->first() }}</span>
-                        </div>
-                    @endif
-
-                    <form method="POST" action="{{ route('login') }}">
-                        @csrf
-                        <div class="mb-5">
-                            <label class="block text-[#1C2434] text-sm font-medium mb-2">Email / Username / NIS / NIP</label>
-                            <div class="relative">
-                                <input type="text" name="email" value="{{ old('email') }}" required
-                                    class="form-input"
-                                    placeholder="Masukkan email, username, NIS, atau NIP">
-                                <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]"></i>
-                            </div>
-                        </div>
-                        <div class="mb-6">
-                            <label class="block text-[#1C2434] text-sm font-medium mb-2">Password</label>
-                            <div class="relative">
-                                <input type="password" name="password" id="password" required
-                                    class="form-input"
-                                    placeholder="Masukkan password">
-                                <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-[#9CA3AF]"></i>
-                                <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#64748B]">
-                                    <i class="fas fa-eye" id="toggleIcon"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-[#3344c4] transition-colors">
-                            Masuk
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" name="password" id="password" required
+                            class="form-input"
+                            placeholder="Masukkan password">
+                        <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
                         </button>
-                    </form>
+                    </div>
                 </div>
-
-                <p class="text-center text-[#64748B] text-sm mt-6">
-                    &copy; {{ date('Y') }} SMK Kreatif Dompu. All rights reserved.
-                </p>
-            </div>
+                <button type="submit" class="w-full bg-[#3C50E0] text-white py-3 rounded-lg font-medium hover:bg-[#3344c4] transition-colors shadow-lg shadow-blue-500/30">
+                    Masuk
+                </button>
+            </form>
         </div>
+
+        <!-- Footer -->
+        <p class="text-center text-white/80 text-sm mt-6">
+            &copy; {{ date('Y') }} SMK Kreatif Dompu. All rights reserved.
+        </p>
     </div>
 
     <script>
